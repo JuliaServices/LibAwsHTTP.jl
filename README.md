@@ -4,4 +4,4 @@
 
 # LibAwsHTTP.jl
 
-Julia bindings for the [aws-c-io](https://github.com/awslabs/aws-c-io) library.
+Julia bindings for the [aws-c-http](https://github.com/awslabs/aws-c-http) library.
