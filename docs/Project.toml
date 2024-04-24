@@ -1,0 +1,4 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+LibAwsCommon = "c6e421ba-b5f8-4792-a1c4-42948de3ed9d"
+LibAwsHTTP = "ce851869-0d7a-41e7-95ef-2d4cb63876dd"

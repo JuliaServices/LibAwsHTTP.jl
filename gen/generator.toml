@@ -1,0 +1,39 @@
+[general]
+library_name = "libaws_c_http"
+smart_de_anonymize = true
+extract_c_comment_style = "doxygen"
+show_c_function_prototype = true
+output_ignorelist = [
+    "AWS_RESTRICT",
+    "AWS_THREAD_LOCAL",
+    "SIZE_MAX_POWER_OF_TWO",
+    "AWS_COMMON_MATH_API",
+    "AWS_THREAD_ONCE_STATIC_INIT",
+    "AWS_BUS_ADDRESS_ALL",
+    "IGNORED",
+    "STDCALL",
+]
+generate_isystem_symbols = false
+
+auto_mutability = false
+auto_mutability_with_new = false
+auto_mutability_includelist = []
+
+# Julia's `@enum` do not allow duplicated values, so by default, C enums are translated to
+# CEnum.jl's `@cenum`.
+# if this entry is true, `@enum` is used and those duplicated enum constants are just commented.
+use_julia_native_enum_type = false
+
+# use `@cenum` but do not print `using CEnum`.
+# this is useful in the case of using `CEnum` directly in the source tree instead of using `CEnum` as a dependency
+print_using_CEnum = true
+
+# Print enums directly as integers without @(c)enum wrapper
+# Override above two options
+print_enum_as_integer = false
+
+# use deterministic symbol instead of `gensym`-generated `var"##XXX"`
+use_deterministic_symbol = true
+
+[codegen]
+use_julia_bool = true

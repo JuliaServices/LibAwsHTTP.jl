@@ -1,0 +1,54 @@
+name: Generate Bindings
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/generate_bindings.yml
+      - gen/**
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/generate_bindings.yml
+      - gen/**
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+jobs:
+  generate-bindings:
+    name: Generate bindings
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: julia-actions/setup-julia@v1
+        with:
+          version: "1.10.2"
+
+      # TODO remove once registered
+      - run: julia --project -e 'using Pkg; Pkg.add(url="https://github.com/JuliaServices/LibAwsCommon.jl")'
+
+      - name: Run the generator
+        run: ./gen/generate.sh
+
+      - name: Create Pull Request (on push)
+        if: ${{ github.event_name == 'push' }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "Regenerate bindings"
+          title: "Regenerate bindings"
+          reviewers: |
+            quinnj
+            Octogonapus
+
+      - name: Create Pull Request (on PR)
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          base: ${{ github.head_ref }}
+          commit-message: "Regenerate bindings"
+          title: "Regenerate bindings"
+          reviewers: |
+            quinnj
+            Octogonapus
