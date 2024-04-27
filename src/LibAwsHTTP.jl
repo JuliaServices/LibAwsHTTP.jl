@@ -4,6 +4,7 @@ using aws_c_http_jll
 using LibAwsCommon
 using LibAwsCompression
 using LibAwsIO
+using LibAwsCal
 
 const IS_LIBC_MUSL = occursin("musl", Base.BUILD_TRIPLET)
 if Sys.isapple() && Sys.ARCH === :aarch64

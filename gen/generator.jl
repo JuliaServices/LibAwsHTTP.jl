@@ -1,11 +1,9 @@
 using Clang.Generators
 using Clang.JLLEnvs
 using JLLPrefixes
-import aws_c_common_jll, aws_c_io_jll, aws_c_compression_jll, aws_c_http_jll
+import aws_c_common_jll, aws_c_io_jll, aws_c_compression_jll, aws_c_http_jll, aws_c_cal_jll
 
 cd(@__DIR__)
-
-const refs_to_remove = []
 
 # This is called if the docs generated from the extract_c_comment_style method did not generate any lines.
 # We need to generate at least some docs so that cross-references work with Documenter.jl.
@@ -20,19 +18,6 @@ function get_docs(node, docs)
     if isempty(docs)
         return ["Documentation not found."]
     end
-
-    # remove references to things which don't exist because it causes Documenter.jl's cross_references check to fail
-    for ref in refs_to_remove
-        for doci in eachindex(docs)
-            docs[doci] = replace(docs[doci], "[`$ref`](@ref)" => "`$ref`")
-        end
-    end
-
-    # # fix other random stuff
-    # for doci in eachindex(docs)
-    #     # fix some code that gets bogus references inserted
-    #     docs[doci] = replace(docs[doci], "for (struct [`aws_hash_iter`](@ref) iter = [`aws_hash_iter_begin`](@ref)(&map); ![`aws_hash_iter_done`](@ref)(&iter); [`aws_hash_iter_next`](@ref)(&iter)) { const key\\_type key = *(const key\\_type *)iter.element.key; value\\_type value = *(value\\_type *)iter.element.value; // etc. }" => "`for (struct aws_hash_iter iter = aws_hash_iter_begin(&map); !aws_hash_iter_done(&iter); aws_hash_iter_next(&iter)) { const key\\_type key = *(const key\\_type *)iter.element.key; value\\_type value = *(value\\_type *)iter.element.value; // etc. }`")
-    # end
 
     return docs
 end
@@ -64,6 +49,8 @@ for target in JLLEnvs.JLL_ENV_TRIPLES
     inc = JLLEnvs.get_pkg_include_dir(aws_c_io_jll, target)
     push!(args, "-isystem$inc")
     inc = JLLEnvs.get_pkg_include_dir(aws_c_compression_jll, target)
+    push!(args, "-isystem$inc")
+    inc = JLLEnvs.get_pkg_include_dir(aws_c_cal_jll, target)
     push!(args, "-isystem$inc")
 
     header_dirs = []
