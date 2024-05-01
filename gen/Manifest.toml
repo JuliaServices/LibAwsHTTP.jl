@@ -2,7 +2,7 @@
 
 julia_version = "1.10.2"
 manifest_format = "2.0"
-project_hash = "ec3f69c6c0b074ab0df08c4a7cc9021fd64d5f2e"
+project_hash = "4b6354899d6581c24da8ab87f084ce0907fa60d3"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -81,6 +81,30 @@ deps = ["Artifacts", "Preferences"]
 git-tree-sha1 = "7e5d6779a1e09a36db2a7b6cff50942a0a7d0fca"
 uuid = "692b3bcd-3c85-4b1f-b108-f13ce0eb3210"
 version = "1.5.0"
+
+[[deps.LibAwsCal]]
+deps = ["CEnum", "LibAwsCommon", "aws_c_cal_jll"]
+git-tree-sha1 = "cb38f20d8e187a33770840e2a2eaef8c13ee425d"
+uuid = "ef519ef6-af43-41a0-8ac4-eb81328190af"
+version = "1.0.0"
+
+[[deps.LibAwsCommon]]
+deps = ["CEnum", "aws_c_common_jll"]
+git-tree-sha1 = "d8705f05415a487369d5bbfb2ca149c72ffb5609"
+uuid = "c6e421ba-b5f8-4792-a1c4-42948de3ed9d"
+version = "1.0.0"
+
+[[deps.LibAwsCompression]]
+deps = ["CEnum", "LibAwsCommon", "aws_c_compression_jll"]
+git-tree-sha1 = "e1de0806ac1960214e7429ae124da767257f5699"
+uuid = "51c8708f-2dd9-446d-a0d4-ba9f49ba4b23"
+version = "1.0.0"
+
+[[deps.LibAwsIO]]
+deps = ["CEnum", "LibAwsCal", "LibAwsCommon", "aws_c_io_jll"]
+git-tree-sha1 = "56ea39b85a5cbb59bf06509c49d6eb96f74bef86"
+uuid = "a5388770-19df-4151-b103-3d71de896ddf"
+version = "1.0.0"
 
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]

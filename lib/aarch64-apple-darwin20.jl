@@ -120,21 +120,6 @@ struct aws_http2_connection_options
 end
 
 """
-Documentation not found.
-"""
-mutable struct aws_client_bootstrap end
-
-"""
-Documentation not found.
-"""
-mutable struct aws_socket_options end
-
-"""
-Documentation not found.
-"""
-mutable struct aws_tls_connection_options end
-
-"""
     aws_http_proxy_connection_type
 
 Supported proxy connection types
@@ -220,16 +205,6 @@ struct proxy_env_var_settings
     connection_type::aws_http_proxy_connection_type
     tls_options::Ptr{aws_tls_connection_options}
 end
-
-"""
-Documentation not found.
-"""
-mutable struct aws_hash_table end
-
-"""
-Documentation not found.
-"""
-mutable struct aws_host_resolution_config end
 
 """
     aws_http_client_connection_options
@@ -407,11 +382,6 @@ struct aws_channel *aws_http_connection_get_channel(struct aws_http_connection *
 function aws_http_connection_get_channel(connection)
     ccall((:aws_http_connection_get_channel, libaws_c_http), Ptr{Cvoid}, (Ptr{aws_http_connection},), connection)
 end
-
-"""
-Documentation not found.
-"""
-mutable struct aws_socket_endpoint end
 
 """
     aws_http_connection_get_remote_endpoint(connection)
@@ -1121,11 +1091,6 @@ Documentation not found.
 """
 mutable struct aws_http_proxy_config end
 
-"""
-Documentation not found.
-"""
-mutable struct aws_socket_channel_bootstrap_options end
-
 # typedef struct aws_string * ( aws_http_proxy_negotiation_get_token_sync_fn ) ( void * user_data , int * out_error_code )
 """
 Synchronous (for now) callback function to fetch a token used in modifying CONNECT requests
@@ -1751,11 +1716,6 @@ struct aws_http1_chunk_extension
     key::aws_byte_cursor
     value::aws_byte_cursor
 end
-
-"""
-Documentation not found.
-"""
-mutable struct aws_input_stream end
 
 """
     aws_http1_chunk_options
@@ -3082,11 +3042,6 @@ const aws_http_server_on_incoming_connection_fn = Cvoid
 Documentation not found.
 """
 const aws_http_server_on_destroy_fn = Cvoid
-
-"""
-Documentation not found.
-"""
-mutable struct aws_server_bootstrap end
 
 """
     aws_http_server_options
