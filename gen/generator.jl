@@ -9,6 +9,14 @@ using LibAwsCal
 
 cd(@__DIR__)
 
+const refs_to_remove = (
+    "AWS_HTTP_CLIENT_CONNECTION_OPTIONS_INIT",
+    "AWS_HTTP_SERVER_CONNECTION_OPTIONS_INIT",
+    "AWS_HTTP_SERVER_OPTIONS_INIT",
+    "aws_tls_connection_options",
+    "aws_socket_options",
+)
+
 # This is called if the docs generated from the extract_c_comment_style method did not generate any lines.
 # We need to generate at least some docs so that cross-references work with Documenter.jl.
 function get_docs(node, docs)
@@ -21,6 +29,13 @@ function get_docs(node, docs)
     # don't generate empty docs because it makes Documenter.jl mad
     if isempty(docs)
         return ["Documentation not found."]
+    end
+
+    # remove references to things which don't exist because it causes Documenter.jl's cross_references check to fail
+    for ref in refs_to_remove
+        for doci in eachindex(docs)
+            docs[doci] = replace(docs[doci], "[`$ref`](@ref)" => "`$ref`")
+        end
     end
 
     return docs
