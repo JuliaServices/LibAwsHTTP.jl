@@ -209,7 +209,7 @@ end
 """
     aws_http_client_connection_options
 
-Options for creating an HTTP client connection. Initialize with [`AWS_HTTP_CLIENT_CONNECTION_OPTIONS_INIT`](@ref) to set default values.
+Options for creating an HTTP client connection. Initialize with `AWS_HTTP_CLIENT_CONNECTION_OPTIONS_INIT` to set default values.
 """
 struct aws_http_client_connection_options
     self_size::Csize_t
@@ -260,7 +260,7 @@ mutable struct aws_http_connection end
 
 Users must release the connection when they are done with it. The connection's memory cannot be reclaimed until this is done. If the connection was not already shutting down, it will be shut down.
 
-Users should always wait for the on\\_shutdown() callback to be called before releasing any data passed to the http\\_connection (Eg [`aws_tls_connection_options`](@ref), [`aws_socket_options`](@ref)) otherwise there will be race conditions between http\\_connection shutdown tasks and memory release tasks, causing Segfaults.
+Users should always wait for the on\\_shutdown() callback to be called before releasing any data passed to the http\\_connection (Eg `aws_tls_connection_options`, `aws_socket_options`) otherwise there will be race conditions between http\\_connection shutdown tasks and memory release tasks, causing Segfaults.
 
 ### Prototype
 ```c
@@ -3046,7 +3046,7 @@ const aws_http_server_on_destroy_fn = Cvoid
 """
     aws_http_server_options
 
-Options for creating an HTTP server. Initialize with [`AWS_HTTP_SERVER_OPTIONS_INIT`](@ref) to set default values.
+Options for creating an HTTP server. Initialize with `AWS_HTTP_SERVER_OPTIONS_INIT` to set default values.
 """
 struct aws_http_server_options
     self_size::Csize_t
@@ -3077,7 +3077,7 @@ const aws_http_on_server_connection_shutdown_fn = Cvoid
 """
     aws_http_server_connection_options
 
-Options for configuring a server-side [`aws_http_connection`](@ref). Initialized with [`AWS_HTTP_SERVER_CONNECTION_OPTIONS_INIT`](@ref) to set default values.
+Options for configuring a server-side [`aws_http_connection`](@ref). Initialized with `AWS_HTTP_SERVER_CONNECTION_OPTIONS_INIT` to set default values.
 """
 struct aws_http_server_connection_options
     self_size::Csize_t
