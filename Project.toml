@@ -13,7 +13,7 @@ aws_c_http_jll = "3254fc65-9028-534d-aa9d-d76d128babc6"
 [compat]
 Aqua = "0.7"
 CEnum = "0.5"
-LibAwsCal = "=1.0.0"
+LibAwsCal = "=1.0.0, 1"
 LibAwsCommon = "=1.0.0"
 LibAwsCompression = "=1.0.0"
 LibAwsIO = "=1.0.0"
