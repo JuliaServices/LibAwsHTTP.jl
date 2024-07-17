@@ -1,8 +1,8 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.2"
+julia_version = "1.10.4"
 manifest_format = "2.0"
-project_hash = "2fff57378e0bd8c0bedbf47307f220d460e4d2d8"
+project_hash = "bf9ecb5193e86f9894e834b0947c137e64f62edd"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -42,9 +42,9 @@ version = "1.6.0"
 
 [[deps.Expat_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "4558ab818dcceaab612d1bb8c19cee87eda2b83c"
+git-tree-sha1 = "1c6317308b9dc757616f0b5cb379db10494443a7"
 uuid = "2e619515-83b5-522b-bb60-26c02a35a201"
-version = "2.5.0+0"
+version = "2.6.2+0"
 
 [[deps.FileWatching]]
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
@@ -62,9 +62,10 @@ uuid = "f8c6e375-362e-5223-8a59-34ff63f689eb"
 version = "2.44.0+2"
 
 [[deps.HistoricalStdlibVersions]]
-git-tree-sha1 = "c8b04a26eaa706b4da6968dfc27ae2d030547cba"
+deps = ["Pkg"]
+git-tree-sha1 = "d50c73e4abd8f7c58eb76a8884dfd531fa8dac81"
 uuid = "6df8b67a-e8a0-4029-b4b7-ac196fe72102"
-version = "1.2.2"
+version = "2.0.0"
 
 [[deps.InteractiveUtils]]
 deps = ["Markdown"]
@@ -72,9 +73,9 @@ uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
 [[deps.JLLPrefixes]]
 deps = ["Artifacts", "Git", "HistoricalStdlibVersions", "Pkg", "Preferences", "SHA", "Scratch"]
-git-tree-sha1 = "c43b83a688b86b33f5b6d8f48d70a41526d845f8"
+git-tree-sha1 = "282d4920f56cb8c39f0a0baa5a834db2e78cc991"
 uuid = "afc68a34-7891-4c5a-9da1-1c62935e7b0d"
-version = "0.3.5"
+version = "0.3.11"
 
 [[deps.JLLWrappers]]
 deps = ["Artifacts", "Preferences"]
@@ -84,27 +85,27 @@ version = "1.5.0"
 
 [[deps.LibAwsCal]]
 deps = ["CEnum", "LibAwsCommon", "aws_c_cal_jll"]
-git-tree-sha1 = "739d946bdf7ebe3cc7b412a8dc8ae899f40621b9"
+git-tree-sha1 = "ea84a3fc5acae82883d2c3ce3579d461d26a47e2"
 uuid = "ef519ef6-af43-41a0-8ac4-eb81328190af"
-version = "1.0.0"
+version = "1.1.0"
 
 [[deps.LibAwsCommon]]
 deps = ["CEnum", "aws_c_common_jll"]
-git-tree-sha1 = "d8705f05415a487369d5bbfb2ca149c72ffb5609"
+git-tree-sha1 = "17d34406ecd3c3f16d1ec298b6abf0a110eb88dc"
 uuid = "c6e421ba-b5f8-4792-a1c4-42948de3ed9d"
-version = "1.0.0"
+version = "1.2.0"
 
 [[deps.LibAwsCompression]]
 deps = ["CEnum", "LibAwsCommon", "aws_c_compression_jll"]
-git-tree-sha1 = "b4e245fd3c8f63598153814399c62fd4add768e1"
+git-tree-sha1 = "54ba2d3fe231427104c3947d485ffd7396c14488"
 uuid = "51c8708f-2dd9-446d-a0d4-ba9f49ba4b23"
-version = "1.0.0"
+version = "1.1.0"
 
 [[deps.LibAwsIO]]
 deps = ["CEnum", "LibAwsCal", "LibAwsCommon", "aws_c_io_jll"]
-git-tree-sha1 = "80e366643d0ec3998450580df3600345a63edeea"
+git-tree-sha1 = "5cb1930df4d7415a4d3b7ad6638b60cd522bf5fc"
 uuid = "a5388770-19df-4151-b103-3d71de896ddf"
-version = "1.0.0"
+version = "1.1.0"
 
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
@@ -161,9 +162,9 @@ version = "1.2.0"
 
 [[deps.OpenSSL_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "3da7367955dcc5c54c1ba4d402ccdc09a1a3e046"
+git-tree-sha1 = "a028ee3cb5641cccc4c24e90c36b0a4f7707bdf5"
 uuid = "458c3c95-2e84-50aa-8efc-19380b2a3a95"
-version = "3.0.13+1"
+version = "3.0.14+0"
 
 [[deps.PCRE2_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -233,15 +234,15 @@ version = "1.2.13+1"
 
 [[deps.aws_c_cal_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "aws_c_common_jll"]
-git-tree-sha1 = "3c554279cdb445fbebdab0b9f9fcc470c6d488b0"
+git-tree-sha1 = "71373d35b383c07412eab3e7dabb8901e47e38b3"
 uuid = "70f11efc-bab2-57f1-b0f3-22aad4e67c4b"
-version = "0.6.12+0"
+version = "0.7.1+0"
 
 [[deps.aws_c_common_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "586a1aa2fdda172c45587b52f5329fedde14f44c"
+git-tree-sha1 = "68d3a903076819904e9e27d077b59b95fcca44e0"
 uuid = "73048d1d-b8c4-5092-a58d-866c5e8d1e50"
-version = "0.9.14+0"
+version = "0.9.23+0"
 
 [[deps.aws_c_compression_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "aws_c_common_jll"]
@@ -251,15 +252,15 @@ version = "0.2.18+0"
 
 [[deps.aws_c_http_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "aws_c_compression_jll", "aws_c_io_jll"]
-git-tree-sha1 = "eb7b8d1769a0f0068b86fe72811df53dd9ddbeae"
+git-tree-sha1 = "54dbe8c5e0d2fe3ed2da9f02422396afcda7d221"
 uuid = "3254fc65-9028-534d-aa9d-d76d128babc6"
-version = "0.8.1+0"
+version = "0.8.4+0"
 
 [[deps.aws_c_io_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "aws_c_cal_jll", "aws_c_common_jll", "s2n_tls_jll"]
-git-tree-sha1 = "8fe3ec4e9c43725e9df637fdd5a6846abc40f7bb"
+git-tree-sha1 = "89e846b722183048528cf422b67d7c9db980c63d"
 uuid = "13c41daa-f319-5298-b5eb-5754e0170d52"
-version = "0.14.7+0"
+version = "0.14.12+1"
 
 [[deps.libLLVM_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -278,6 +279,6 @@ version = "17.4.0+2"
 
 [[deps.s2n_tls_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "347948ecd0fa573c52131ff3eca523476b8f4894"
+git-tree-sha1 = "5bd86d0df65eb3bbec3176aa41a328ae01a8a005"
 uuid = "cddc5d3d-934d-5d3a-9747-62fc12ea3f48"
-version = "1.4.12+0"
+version = "1.4.17+0"

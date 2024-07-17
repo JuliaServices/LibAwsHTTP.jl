@@ -651,6 +651,8 @@ struct aws_http_connection_manager_options
     shutdown_complete_callback::Ptr{aws_http_connection_manager_shutdown_complete_fn}
     enable_read_back_pressure::Bool
     max_connection_idle_in_milliseconds::UInt64
+    network_interface_names_array::Ptr{aws_byte_cursor}
+    num_network_interface_names::Csize_t
 end
 
 """

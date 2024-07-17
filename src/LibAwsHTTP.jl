@@ -50,8 +50,8 @@ end
 function init(allocator=default_aws_allocator())
     LibAwsCommon.init(allocator)
     LibAwsCompression.init(allocator)
-    LibAwsIO.init(allocator)
     LibAwsCal.init(allocator)
+    LibAwsIO.init(allocator)
     aws_http_library_init(allocator)
     return
 end
