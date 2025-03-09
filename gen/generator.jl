@@ -1,7 +1,7 @@
 using Clang.Generators
 using Clang.JLLEnvs
 using JLLPrefixes
-import aws_c_common_jll, aws_c_io_jll, aws_c_compression_jll, aws_c_http_jll, aws_c_cal_jll
+import aws_c_common_jll, aws_c_io_jll, aws_c_compression_jll, aws_c_http_jq_jll, aws_c_cal_jll
 using LibAwsCommon
 using LibAwsIO
 using LibAwsCompression
