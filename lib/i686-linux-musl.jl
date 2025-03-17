@@ -651,6 +651,8 @@ struct aws_http_connection_manager_options
     shutdown_complete_callback::Ptr{aws_http_connection_manager_shutdown_complete_fn}
     enable_read_back_pressure::Bool
     max_connection_idle_in_milliseconds::UInt64
+    connection_acquisition_timeout_ms::UInt64
+    max_pending_connection_acquisitions::UInt64
     network_interface_names_array::Ptr{aws_byte_cursor}
     num_network_interface_names::Csize_t
 end
@@ -785,6 +787,8 @@ Documentation not found.
     AWS_ERROR_HTTP_MANUAL_WRITE_NOT_ENABLED = 2090
     AWS_ERROR_HTTP_MANUAL_WRITE_HAS_COMPLETED = 2091
     AWS_ERROR_HTTP_RESPONSE_FIRST_BYTE_TIMEOUT = 2092
+    AWS_ERROR_HTTP_CONNECTION_MANAGER_ACQUISITION_TIMEOUT = 2093
+    AWS_ERROR_HTTP_CONNECTION_MANAGER_MAX_PENDING_ACQUISITIONS_EXCEEDED = 2094
     AWS_ERROR_HTTP_END_RANGE = 3071
 end
 
