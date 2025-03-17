@@ -8,7 +8,7 @@ LibAwsCal = "ef519ef6-af43-41a0-8ac4-eb81328190af"
 LibAwsCommon = "c6e421ba-b5f8-4792-a1c4-42948de3ed9d"
 LibAwsCompression = "51c8708f-2dd9-446d-a0d4-ba9f49ba4b23"
 LibAwsIO = "a5388770-19df-4151-b103-3d71de896ddf"
-aws_c_http_jq_jll = "8f53af78-0b28-57f6-844a-4720ec1bfefc"
+aws_c_http_jll = "3254fc65-9028-534d-aa9d-d76d128babc6"
 
 [compat]
 Aqua = "0.7"
@@ -17,7 +17,7 @@ LibAwsCal = "1.1"
 LibAwsCommon = "1.2"
 LibAwsCompression = "1.1"
 LibAwsIO = "1.2"
-aws_c_http_jq_jll = "0.9.2"
+aws_c_http_jll = "=0.8.4"
 julia = "1.6"
 
 [extras]

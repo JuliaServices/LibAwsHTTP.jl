@@ -8,7 +8,7 @@ LibAwsIO = "a5388770-19df-4151-b103-3d71de896ddf"
 aws_c_cal_jll = "70f11efc-bab2-57f1-b0f3-22aad4e67c4b"
 aws_c_common_jll = "73048d1d-b8c4-5092-a58d-866c5e8d1e50"
 aws_c_compression_jll = "73a04cd5-f3d7-5bac-9290-e8adb709f224"
-aws_c_http_jq_jll = "8f53af78-0b28-57f6-844a-4720ec1bfefc"
+aws_c_http_jll = "3254fc65-9028-534d-aa9d-d76d128babc6"
 aws_c_io_jll = "13c41daa-f319-5298-b5eb-5754e0170d52"
 
 [compat]
