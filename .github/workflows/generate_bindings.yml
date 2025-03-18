@@ -1,51 +1,113 @@
-name: Generate Bindings
-on:
-  workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/generate_bindings.yml
-      - gen/**
-  pull_request:
-    branches: [main]
-    paths:
-      - .github/workflows/generate_bindings.yml
-      - gen/**
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
-  cancel-in-progress: true
-jobs:
-  generate-bindings:
-    name: Generate bindings
-    runs-on: ubuntu-22.04
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
+name: Auto update AWS LibAwsHTTP package
 
-      - uses: julia-actions/setup-julia@v1
+on:
+  schedule:
+    - cron: '0 * * * *'  # Run every hour
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  LIBAWS_REPO: "JuliaServices/LibAwsHTTP.jl"
+  JLL_REPO: "JuliaBinaryWrappers/aws_c_http_jll.jl"
+  LIBAWS_PATH: "libaws"  # Path for LibAwsX.jl repo
+  JLL_PATH: "jll"        # Path for aws_c_X_jll.jl repo
+  LIBRARY_NAME: "aws_c_http"
+  JLL_NAME: "aws_c_http_jll"
+
+jobs:
+  update-awshttp-package:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout LibAwsHTTP repository
+        uses: actions/checkout@v4
         with:
-          version: "1.10.2"
+          repository: ${{ env.LIBAWS_REPO }}
+          ref: main
+          path: ${{ env.LIBAWS_PATH }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout BinaryWrapper repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.JLL_REPO }}
+          ref: main
+          path: ${{ env.JLL_PATH }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Parse current JLL version
+        run: |
+          RAW_JLL_VERSION=$(grep -oP -m 1 '(?<=version = ")[^"]+' ${{ env.JLL_PATH }}/Project.toml)
+          JLL_VERSION=$(echo "$RAW_JLL_VERSION" | sed 's/+[0-9]*//')
+          echo "JLL_VERSION=${JLL_VERSION}" >> $GITHUB_ENV
+
+      - name: Parse Project.toml compat version
+        run: |
+          COMPAT_SECTION=$(awk '/^\[compat\]/ {flag=1; next} /^\[/{flag=0} flag' ${{ env.LIBAWS_PATH }}/Project.toml)
+          PROJECT_VERSION=$(echo "$COMPAT_SECTION" | grep -oP "(?<=${{ env.JLL_NAME }} = \")[^\"]+" | sed 's/^=//')
+          echo "PROJECT_VERSION=${PROJECT_VERSION}" >> $GITHUB_ENV
+
+      - name: Check for version updates
+        id: check_version
+        run: |
+          if [[ "$JLL_VERSION" != "$PROJECT_VERSION" ]]; then
+            echo "New version found: $JLL_VERSION (was $PROJECT_VERSION)"
+            echo "update_needed=true" >> $GITHUB_ENV
+          else
+            echo "No update needed."
+            exit 0
+          fi
+
+      - name: Update Project.toml Versions
+        if: env.update_needed == 'true'
+        run: |
+          sed -i "s/${{ env.JLL_NAME }} = \"=$PROJECT_VERSION\"/${{ env.JLL_NAME }} = \"=$JLL_VERSION\"/" ${{ env.LIBAWS_PATH }}/Project.toml
+          sed -i "s/${{ env.JLL_NAME }} = \"=$PROJECT_VERSION\"/${{ env.JLL_NAME }} = \"=$JLL_VERSION\"/" ${{ env.LIBAWS_PATH }}/gen/Project.toml
+
+          CURRENT_LIBAWS_VERSION=$(grep -oP -m 1 '(?<=version = ")[^"]+' ${{ env.LIBAWS_PATH }}/Project.toml)
+          PATCH=$(echo $CURRENT_LIBAWS_VERSION | awk -F. '{print $3+1}')
+          NEW_LIBAWS_VERSION=$(echo $CURRENT_LIBAWS_VERSION | awk -F. '{print $1"."$2"."'"$PATCH"'}')
+          sed -i "s/version = \"$CURRENT_LIBAWS_VERSION\"/version = \"$NEW_LIBAWS_VERSION\"/" ${{ env.LIBAWS_PATH }}/Project.toml
+
+      - uses: julia-actions/cache@v2
 
       - name: Run the generator
-        run: ./gen/generate.sh
+        if: env.update_needed == 'true'
+        run: |
+          cd ${{ env.LIBAWS_PATH }}
+          ./gen/generate.sh
 
-      - name: Create Pull Request (on push)
-        if: ${{ github.event_name == 'push' }}
+      - name: Check for Changes in Bindings
+        if: env.update_needed == 'true'
+        id: check_bindings
+        run: |
+          cd ${{ env.LIBAWS_PATH }}
+          if git diff --quiet; then
+            echo "No bindings changes detected."
+            echo "bindings_changed=false" >> $GITHUB_ENV
+          else
+            echo "Bindings changed."
+            echo "bindings_changed=true" >> $GITHUB_ENV
+          fi
+
+      - name: Commit and Open PR
+        if: env.bindings_changed == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          commit-message: "Regenerate bindings"
-          title: "Regenerate bindings"
-          reviewers: |
-            quinnj
-            Octogonapus
+          path: ${{ env.LIBAWS_PATH }}
+          branch: update-${{ env.JLL_NAME }}-${{ env.JLL_VERSION }}
+          commit-message: "Update ${{ env.JLL_NAME }} to version ${{ env.JLL_VERSION }}"
+          title: "Update ${{ env.JLL_NAME }} to version ${{ env.JLL_VERSION }}"
+          body: |
+            This PR updates the JLL dependency and regenerates bindings automatically.
 
-      - name: Create Pull Request (on PR)
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: peter-evans/create-pull-request@v6
-        with:
-          base: ${{ github.head_ref }}
-          commit-message: "Regenerate bindings"
-          title: "Regenerate bindings"
-          reviewers: |
-            quinnj
-            Octogonapus
+            - Updated **${{ env.JLL_NAME }}** to version **${{ env.JLL_VERSION }}**
+            - Updated **${{ env.LIBAWS_REPO }}** version number
+            - **Bindings regeneration:**
+              - ${{ env.bindings_changed == 'true' && '✅ Updated bindings' || '⚠️ No bindings changes detected' }}
+
+          reviewers: quinnj, Octogonapus
+          token: ${{ secrets.ORG_PAT }}
