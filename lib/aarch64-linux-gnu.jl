@@ -635,6 +635,7 @@ struct aws_http_connection_manager_options
     bootstrap::Ptr{aws_client_bootstrap}
     initial_window_size::Csize_t
     socket_options::Ptr{aws_socket_options}
+    response_first_byte_timeout_ms::UInt64
     tls_connection_options::Ptr{aws_tls_connection_options}
     http2_prior_knowledge::Bool
     monitoring_options::Ptr{aws_http_connection_monitoring_options}
@@ -1197,28 +1198,28 @@ struct aws_http_proxy_negotiator_tunnelling_vtable
 end
 
 """
-    __JL_Ctag_371
+    union (unnamed at /home/runner/.julia/artifacts/cb2562b0c20a3137b66f577852b9b1dfccdd8a62/include/aws/http/proxy.h:302:5)
 
 Documentation not found.
 """
-struct __JL_Ctag_371
+struct var"union (unnamed at /home/runner/.julia/artifacts/cb2562b0c20a3137b66f577852b9b1dfccdd8a62/include/aws/http/proxy.h:302:5)"
     data::NTuple{8, UInt8}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_371}, f::Symbol)
+function Base.getproperty(x::Ptr{var"union (unnamed at /home/runner/.julia/artifacts/cb2562b0c20a3137b66f577852b9b1dfccdd8a62/include/aws/http/proxy.h:302:5)"}, f::Symbol)
     f === :forwarding_vtable && return Ptr{Ptr{aws_http_proxy_negotiator_forwarding_vtable}}(x + 0)
     f === :tunnelling_vtable && return Ptr{Ptr{aws_http_proxy_negotiator_tunnelling_vtable}}(x + 0)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_371, f::Symbol)
-    r = Ref{__JL_Ctag_371}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_371}, r)
+function Base.getproperty(x::var"union (unnamed at /home/runner/.julia/artifacts/cb2562b0c20a3137b66f577852b9b1dfccdd8a62/include/aws/http/proxy.h:302:5)", f::Symbol)
+    r = Ref{var"union (unnamed at /home/runner/.julia/artifacts/cb2562b0c20a3137b66f577852b9b1dfccdd8a62/include/aws/http/proxy.h:302:5)"}(x)
+    ptr = Base.unsafe_convert(Ptr{var"union (unnamed at /home/runner/.julia/artifacts/cb2562b0c20a3137b66f577852b9b1dfccdd8a62/include/aws/http/proxy.h:302:5)"}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_371}, f::Symbol, v)
+function Base.setproperty!(x::Ptr{var"union (unnamed at /home/runner/.julia/artifacts/cb2562b0c20a3137b66f577852b9b1dfccdd8a62/include/aws/http/proxy.h:302:5)"}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
 
@@ -1234,7 +1235,7 @@ end
 function Base.getproperty(x::Ptr{aws_http_proxy_negotiator}, f::Symbol)
     f === :ref_count && return Ptr{aws_ref_count}(x + 0)
     f === :impl && return Ptr{Ptr{Cvoid}}(x + 24)
-    f === :strategy_vtable && return Ptr{__JL_Ctag_371}(x + 32)
+    f === :strategy_vtable && return Ptr{var"union (unnamed at /home/runner/.julia/artifacts/cb2562b0c20a3137b66f577852b9b1dfccdd8a62/include/aws/http/proxy.h:302:5)"}(x + 32)
     return getfield(x, f)
 end
 
@@ -1702,7 +1703,6 @@ Invoked when the data stream of an outgoing HTTP write operation is no longer in
 """
 const aws_http_stream_write_complete_fn = Cvoid
 
-# typedef aws_http_stream_write_complete_fn aws_http1_stream_write_chunk_complete_fn
 """
 Invoked when the data of an outgoing HTTP/1.1 chunk is no longer in use. This is always invoked on the HTTP connection's event-loop thread.
 
@@ -1737,7 +1737,6 @@ struct aws_http1_chunk_options
     user_data::Ptr{Cvoid}
 end
 
-# typedef aws_http_stream_write_complete_fn aws_http2_stream_write_data_complete_fn
 """
 Invoked when the data of an outgoing HTTP2 data frame is no longer in use. This is always invoked on the HTTP connection's event-loop thread.
 
@@ -2626,7 +2625,7 @@ end
 """
     aws_http1_stream_write_chunk(http1_stream, options)
 
-Submit a chunk of data to be sent on an HTTP/1.1 stream. The stream must have specified "chunked" in a "transfer-encoding" header. For client streams, activate() must be called before any chunks are submitted. For server streams, the response must be submitted before any chunks. A final chunk with size 0 must be submitted to successfully complete the HTTP-stream.
+Submit a chunk of data to be sent on an HTTP/1.1 stream. The stream must have specified "chunked" in a "transfer-encoding" header, and the [`aws_http_message`](@ref) must NOT have any body stream set. For client streams, activate() must be called before any chunks are submitted. For server streams, the response must be submitted before any chunks. A final chunk with size 0 must be submitted to successfully complete the HTTP-stream.
 
 Returns AWS\\_OP\\_SUCCESS if the chunk has been submitted. The chunk's completion callback will be invoked when the HTTP-stream is done with the chunk data, whether or not it was successfully sent (see [`aws_http1_stream_write_chunk_complete_fn`](@ref)). The chunk data must remain valid until the completion callback is invoked.
 
