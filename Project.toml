@@ -1,6 +1,6 @@
 name = "LibAwsHTTP"
 uuid = "ce851869-0d7a-41e7-95ef-2d4cb63876dd"
-version = "1.2.2"
+version = "1.2.3"
 
 [deps]
 CEnum = "fa961155-64e5-5f13-b03f-caf6b980ea82"
@@ -17,7 +17,7 @@ LibAwsCal = "1.1"
 LibAwsCommon = "1.2"
 LibAwsCompression = "1.1"
 LibAwsIO = "1.2"
-aws_c_http_jll = "=0.9.6"
+aws_c_http_jll = "=0.9.7"
 julia = "1.6"
 
 [extras]

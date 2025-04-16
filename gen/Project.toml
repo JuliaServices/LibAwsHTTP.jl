@@ -14,4 +14,4 @@ aws_c_io_jll = "13c41daa-f319-5298-b5eb-5754e0170d52"
 [compat]
 Clang = "0.18.3"
 JLLPrefixes = "0.3"
-aws_c_http_jll = "=0.9.6"
+aws_c_http_jll = "=0.9.7"
