@@ -117,6 +117,8 @@ struct aws_http2_connection_options
     on_goaway_received::Ptr{aws_http2_on_goaway_received_fn}
     on_remote_settings_change::Ptr{aws_http2_on_remote_settings_change_fn}
     conn_manual_window_management::Bool
+    conn_window_size_threshold_to_send_update::UInt32
+    stream_window_size_threshold_to_send_update::UInt32
 end
 
 """
@@ -584,7 +586,9 @@ If `conn_manual_window_management` is false, this call will have no effect. The 
 
 If you are not connected, this call will have no effect.
 
-Crashes when the connection is not http2 connection. The limit of the Maximum Size is 2**31 - 1. If the increment size cause the connection flow window exceeds the Maximum size, this call will result in the connection lost.
+Crashes when the connection is not http2 connection. The limit of the Maximum Size is 2**31 - 1. And client will make sure the WINDOW\\_UPDATE frame to be valid.
+
+The client control exactly when the WINDOW\\_UPDATE frame sent. Check `conn_window_size_threshold_to_send_update` for details.
 
 # Arguments
 * `http2_connection`: HTTP/2 connection.
@@ -918,6 +922,7 @@ struct aws_http2_stream_manager_options
     max_closed_streams::Csize_t
     conn_manual_window_management::Bool
     enable_read_back_pressure::Bool
+    initial_window_size::Csize_t
     monitoring_options::Ptr{aws_http_connection_monitoring_options}
     proxy_options::Ptr{aws_http_proxy_options}
     proxy_ev_settings::Ptr{proxy_env_var_settings}
@@ -1198,28 +1203,28 @@ struct aws_http_proxy_negotiator_tunnelling_vtable
 end
 
 """
-    union (unnamed at /home/runner/.julia/artifacts/9769d2ab3d6dc8486503e7070c42ca12d4509a75/include/aws/http/proxy.h:302:5)
+    union (unnamed at /home/runner/.julia/artifacts/49bcd60ee82ae76a2cf142238729b94a023a3723/include/aws/http/proxy.h:302:5)
 
 Documentation not found.
 """
-struct var"union (unnamed at /home/runner/.julia/artifacts/9769d2ab3d6dc8486503e7070c42ca12d4509a75/include/aws/http/proxy.h:302:5)"
+struct var"union (unnamed at /home/runner/.julia/artifacts/49bcd60ee82ae76a2cf142238729b94a023a3723/include/aws/http/proxy.h:302:5)"
     data::NTuple{4, UInt8}
 end
 
-function Base.getproperty(x::Ptr{var"union (unnamed at /home/runner/.julia/artifacts/9769d2ab3d6dc8486503e7070c42ca12d4509a75/include/aws/http/proxy.h:302:5)"}, f::Symbol)
+function Base.getproperty(x::Ptr{var"union (unnamed at /home/runner/.julia/artifacts/49bcd60ee82ae76a2cf142238729b94a023a3723/include/aws/http/proxy.h:302:5)"}, f::Symbol)
     f === :forwarding_vtable && return Ptr{Ptr{aws_http_proxy_negotiator_forwarding_vtable}}(x + 0)
     f === :tunnelling_vtable && return Ptr{Ptr{aws_http_proxy_negotiator_tunnelling_vtable}}(x + 0)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::var"union (unnamed at /home/runner/.julia/artifacts/9769d2ab3d6dc8486503e7070c42ca12d4509a75/include/aws/http/proxy.h:302:5)", f::Symbol)
-    r = Ref{var"union (unnamed at /home/runner/.julia/artifacts/9769d2ab3d6dc8486503e7070c42ca12d4509a75/include/aws/http/proxy.h:302:5)"}(x)
-    ptr = Base.unsafe_convert(Ptr{var"union (unnamed at /home/runner/.julia/artifacts/9769d2ab3d6dc8486503e7070c42ca12d4509a75/include/aws/http/proxy.h:302:5)"}, r)
+function Base.getproperty(x::var"union (unnamed at /home/runner/.julia/artifacts/49bcd60ee82ae76a2cf142238729b94a023a3723/include/aws/http/proxy.h:302:5)", f::Symbol)
+    r = Ref{var"union (unnamed at /home/runner/.julia/artifacts/49bcd60ee82ae76a2cf142238729b94a023a3723/include/aws/http/proxy.h:302:5)"}(x)
+    ptr = Base.unsafe_convert(Ptr{var"union (unnamed at /home/runner/.julia/artifacts/49bcd60ee82ae76a2cf142238729b94a023a3723/include/aws/http/proxy.h:302:5)"}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{var"union (unnamed at /home/runner/.julia/artifacts/9769d2ab3d6dc8486503e7070c42ca12d4509a75/include/aws/http/proxy.h:302:5)"}, f::Symbol, v)
+function Base.setproperty!(x::Ptr{var"union (unnamed at /home/runner/.julia/artifacts/49bcd60ee82ae76a2cf142238729b94a023a3723/include/aws/http/proxy.h:302:5)"}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
 
@@ -1235,7 +1240,7 @@ end
 function Base.getproperty(x::Ptr{aws_http_proxy_negotiator}, f::Symbol)
     f === :ref_count && return Ptr{aws_ref_count}(x + 0)
     f === :impl && return Ptr{Ptr{Cvoid}}(x + 12)
-    f === :strategy_vtable && return Ptr{var"union (unnamed at /home/runner/.julia/artifacts/9769d2ab3d6dc8486503e7070c42ca12d4509a75/include/aws/http/proxy.h:302:5)"}(x + 16)
+    f === :strategy_vtable && return Ptr{var"union (unnamed at /home/runner/.julia/artifacts/49bcd60ee82ae76a2cf142238729b94a023a3723/include/aws/http/proxy.h:302:5)"}(x + 16)
     return getfield(x, f)
 end
 
@@ -2940,6 +2945,8 @@ Increment the stream's flow-control window to keep data flowing.
 If the connection was created with `manual_window_management` set true, the flow-control window of each stream will shrink as body data is received (headers, padding, and other metadata do not affect the window). The connection's `initial_window_size` determines the starting size of each stream's window. If a stream's flow-control window reaches 0, no further data will be received.
 
 If `manual_window_management` is false, this call will have no effect. The connection maintains its flow-control windows such that no back-pressure is applied and data arrives as fast as possible.
+
+For HTTP/2, the client control exactly when the WINDOW\\_UPDATE frame sent. And client will make sure the WINDOW\\_UPDATE frame to be valid. Check `stream_window_size_threshold_to_send_update` for details.
 
 ### Prototype
 ```c
