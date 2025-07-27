@@ -1203,28 +1203,28 @@ struct aws_http_proxy_negotiator_tunnelling_vtable
 end
 
 """
-    union (unnamed at /home/runner/.julia/artifacts/51eab4da1349c38b708a7bbcab070a4090bb2560/include/aws/http/proxy.h:302:5)
+    union (unnamed at /home/runner/.julia/artifacts/25f7234592c737021091f9c3ca2c3c9ced3d1f69/include/aws/http/proxy.h:304:5)
 
 Documentation not found.
 """
-struct var"union (unnamed at /home/runner/.julia/artifacts/51eab4da1349c38b708a7bbcab070a4090bb2560/include/aws/http/proxy.h:302:5)"
+struct var"union (unnamed at /home/runner/.julia/artifacts/25f7234592c737021091f9c3ca2c3c9ced3d1f69/include/aws/http/proxy.h:304:5)"
     data::NTuple{8, UInt8}
 end
 
-function Base.getproperty(x::Ptr{var"union (unnamed at /home/runner/.julia/artifacts/51eab4da1349c38b708a7bbcab070a4090bb2560/include/aws/http/proxy.h:302:5)"}, f::Symbol)
+function Base.getproperty(x::Ptr{var"union (unnamed at /home/runner/.julia/artifacts/25f7234592c737021091f9c3ca2c3c9ced3d1f69/include/aws/http/proxy.h:304:5)"}, f::Symbol)
     f === :forwarding_vtable && return Ptr{Ptr{aws_http_proxy_negotiator_forwarding_vtable}}(x + 0)
     f === :tunnelling_vtable && return Ptr{Ptr{aws_http_proxy_negotiator_tunnelling_vtable}}(x + 0)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::var"union (unnamed at /home/runner/.julia/artifacts/51eab4da1349c38b708a7bbcab070a4090bb2560/include/aws/http/proxy.h:302:5)", f::Symbol)
-    r = Ref{var"union (unnamed at /home/runner/.julia/artifacts/51eab4da1349c38b708a7bbcab070a4090bb2560/include/aws/http/proxy.h:302:5)"}(x)
-    ptr = Base.unsafe_convert(Ptr{var"union (unnamed at /home/runner/.julia/artifacts/51eab4da1349c38b708a7bbcab070a4090bb2560/include/aws/http/proxy.h:302:5)"}, r)
+function Base.getproperty(x::var"union (unnamed at /home/runner/.julia/artifacts/25f7234592c737021091f9c3ca2c3c9ced3d1f69/include/aws/http/proxy.h:304:5)", f::Symbol)
+    r = Ref{var"union (unnamed at /home/runner/.julia/artifacts/25f7234592c737021091f9c3ca2c3c9ced3d1f69/include/aws/http/proxy.h:304:5)"}(x)
+    ptr = Base.unsafe_convert(Ptr{var"union (unnamed at /home/runner/.julia/artifacts/25f7234592c737021091f9c3ca2c3c9ced3d1f69/include/aws/http/proxy.h:304:5)"}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{var"union (unnamed at /home/runner/.julia/artifacts/51eab4da1349c38b708a7bbcab070a4090bb2560/include/aws/http/proxy.h:302:5)"}, f::Symbol, v)
+function Base.setproperty!(x::Ptr{var"union (unnamed at /home/runner/.julia/artifacts/25f7234592c737021091f9c3ca2c3c9ced3d1f69/include/aws/http/proxy.h:304:5)"}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
 
@@ -1240,7 +1240,7 @@ end
 function Base.getproperty(x::Ptr{aws_http_proxy_negotiator}, f::Symbol)
     f === :ref_count && return Ptr{aws_ref_count}(x + 0)
     f === :impl && return Ptr{Ptr{Cvoid}}(x + 24)
-    f === :strategy_vtable && return Ptr{var"union (unnamed at /home/runner/.julia/artifacts/51eab4da1349c38b708a7bbcab070a4090bb2560/include/aws/http/proxy.h:302:5)"}(x + 32)
+    f === :strategy_vtable && return Ptr{var"union (unnamed at /home/runner/.julia/artifacts/25f7234592c737021091f9c3ca2c3c9ced3d1f69/include/aws/http/proxy.h:304:5)"}(x + 32)
     return getfield(x, f)
 end
 
