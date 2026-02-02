@@ -1,4 +1,4 @@
-using CEnum
+using CEnum: CEnum, @cenum
 
 # typedef void ( aws_http_on_client_connection_setup_fn ) ( struct aws_http_connection * connection , int error_code , void * user_data )
 """
@@ -869,6 +869,19 @@ function aws_http_library_clean_up()
 end
 
 """
+    aws_http_error_code_is_retryable(error_code)
+
+Documentation not found.
+### Prototype
+```c
+bool aws_http_error_code_is_retryable(int error_code);
+```
+"""
+function aws_http_error_code_is_retryable(error_code)
+    ccall((:aws_http_error_code_is_retryable, libaws_c_http), Bool, (Cint,), error_code)
+end
+
+"""
     aws_http_status_text(status_code)
 
 Returns the description of common status codes. Ex: 404 -> "Not Found" An empty string is returned if the status code is not recognized.
@@ -1204,32 +1217,6 @@ struct aws_http_proxy_negotiator_tunnelling_vtable
 end
 
 """
-    union (unnamed at /home/runner/.julia/artifacts/699ec37bac8353debf4eb48cdd7d868362ca767b/include/aws/http/proxy.h:310:5)
-
-Documentation not found.
-"""
-struct var"union (unnamed at /home/runner/.julia/artifacts/699ec37bac8353debf4eb48cdd7d868362ca767b/include/aws/http/proxy.h:310:5)"
-    data::NTuple{4, UInt8}
-end
-
-function Base.getproperty(x::Ptr{var"union (unnamed at /home/runner/.julia/artifacts/699ec37bac8353debf4eb48cdd7d868362ca767b/include/aws/http/proxy.h:310:5)"}, f::Symbol)
-    f === :forwarding_vtable && return Ptr{Ptr{aws_http_proxy_negotiator_forwarding_vtable}}(x + 0)
-    f === :tunnelling_vtable && return Ptr{Ptr{aws_http_proxy_negotiator_tunnelling_vtable}}(x + 0)
-    return getfield(x, f)
-end
-
-function Base.getproperty(x::var"union (unnamed at /home/runner/.julia/artifacts/699ec37bac8353debf4eb48cdd7d868362ca767b/include/aws/http/proxy.h:310:5)", f::Symbol)
-    r = Ref{var"union (unnamed at /home/runner/.julia/artifacts/699ec37bac8353debf4eb48cdd7d868362ca767b/include/aws/http/proxy.h:310:5)"}(x)
-    ptr = Base.unsafe_convert(Ptr{var"union (unnamed at /home/runner/.julia/artifacts/699ec37bac8353debf4eb48cdd7d868362ca767b/include/aws/http/proxy.h:310:5)"}, r)
-    fptr = getproperty(ptr, f)
-    GC.@preserve r unsafe_load(fptr)
-end
-
-function Base.setproperty!(x::Ptr{var"union (unnamed at /home/runner/.julia/artifacts/699ec37bac8353debf4eb48cdd7d868362ca767b/include/aws/http/proxy.h:310:5)"}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
-end
-
-"""
     aws_http_proxy_negotiator
 
 Documentation not found.
@@ -1241,7 +1228,7 @@ end
 function Base.getproperty(x::Ptr{aws_http_proxy_negotiator}, f::Symbol)
     f === :ref_count && return Ptr{aws_ref_count}(x + 0)
     f === :impl && return Ptr{Ptr{Cvoid}}(x + 12)
-    f === :strategy_vtable && return Ptr{var"union (unnamed at /home/runner/.julia/artifacts/699ec37bac8353debf4eb48cdd7d868362ca767b/include/aws/http/proxy.h:310:5)"}(x + 16)
+    f === :strategy_vtable && return Ptr{__JL_Ctag_182}(x + 16)
     return getfield(x, f)
 end
 
@@ -1254,6 +1241,14 @@ end
 
 function Base.setproperty!(x::Ptr{aws_http_proxy_negotiator}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
+end
+
+function Base.propertynames(x::aws_http_proxy_negotiator, private::Bool = false)
+    (:ref_count, :impl, :strategy_vtable, if private
+            fieldnames(typeof(x))
+        else
+            ()
+        end...)
 end
 
 """
@@ -2442,14 +2437,15 @@ function aws_http_message_set_body_stream(message, body_stream)
 end
 
 """
-Documentation not found.
+aws\\_future<aws\\_http\\_message*>
 """
 mutable struct aws_future_http_message end
 
 """
     aws_future_http_message_new(alloc)
 
-Documentation not found.
+aws\\_future<aws\\_http\\_message*>
+
 ### Prototype
 ```c
 AWS_FUTURE_T_POINTER_WITH_RELEASE_DECLARATION(aws_future_http_message, struct aws_http_message, AWS_HTTP_API);
@@ -2462,7 +2458,8 @@ end
 """
     aws_future_http_message_set_result_by_move(future, pointer_address)
 
-Documentation not found.
+aws\\_future<aws\\_http\\_message*>
+
 ### Prototype
 ```c
 AWS_FUTURE_T_POINTER_WITH_RELEASE_DECLARATION(aws_future_http_message, struct aws_http_message, AWS_HTTP_API);
@@ -2475,7 +2472,8 @@ end
 """
     aws_future_http_message_get_result_by_move(future)
 
-Documentation not found.
+aws\\_future<aws\\_http\\_message*>
+
 ### Prototype
 ```c
 AWS_FUTURE_T_POINTER_WITH_RELEASE_DECLARATION(aws_future_http_message, struct aws_http_message, AWS_HTTP_API);
@@ -2488,7 +2486,8 @@ end
 """
     aws_future_http_message_peek_result(future)
 
-Documentation not found.
+aws\\_future<aws\\_http\\_message*>
+
 ### Prototype
 ```c
 AWS_FUTURE_T_POINTER_WITH_RELEASE_DECLARATION(aws_future_http_message, struct aws_http_message, AWS_HTTP_API);
@@ -2501,7 +2500,8 @@ end
 """
     aws_future_http_message_acquire(future)
 
-Documentation not found.
+aws\\_future<aws\\_http\\_message*>
+
 ### Prototype
 ```c
 AWS_FUTURE_T_POINTER_WITH_RELEASE_DECLARATION(aws_future_http_message, struct aws_http_message, AWS_HTTP_API);
@@ -2514,7 +2514,8 @@ end
 """
     aws_future_http_message_release(future)
 
-Documentation not found.
+aws\\_future<aws\\_http\\_message*>
+
 ### Prototype
 ```c
 AWS_FUTURE_T_POINTER_WITH_RELEASE_DECLARATION(aws_future_http_message, struct aws_http_message, AWS_HTTP_API);
@@ -2527,7 +2528,8 @@ end
 """
     aws_future_http_message_set_error(future, error_code)
 
-Documentation not found.
+aws\\_future<aws\\_http\\_message*>
+
 ### Prototype
 ```c
 AWS_FUTURE_T_POINTER_WITH_RELEASE_DECLARATION(aws_future_http_message, struct aws_http_message, AWS_HTTP_API);
@@ -2540,7 +2542,8 @@ end
 """
     aws_future_http_message_is_done(future)
 
-Documentation not found.
+aws\\_future<aws\\_http\\_message*>
+
 ### Prototype
 ```c
 AWS_FUTURE_T_POINTER_WITH_RELEASE_DECLARATION(aws_future_http_message, struct aws_http_message, AWS_HTTP_API);
@@ -2553,7 +2556,8 @@ end
 """
     aws_future_http_message_get_error(future)
 
-Documentation not found.
+aws\\_future<aws\\_http\\_message*>
+
 ### Prototype
 ```c
 AWS_FUTURE_T_POINTER_WITH_RELEASE_DECLARATION(aws_future_http_message, struct aws_http_message, AWS_HTTP_API);
@@ -2566,7 +2570,8 @@ end
 """
     aws_future_http_message_register_callback(future, on_done, user_data)
 
-Documentation not found.
+aws\\_future<aws\\_http\\_message*>
+
 ### Prototype
 ```c
 AWS_FUTURE_T_POINTER_WITH_RELEASE_DECLARATION(aws_future_http_message, struct aws_http_message, AWS_HTTP_API);
@@ -2579,7 +2584,8 @@ end
 """
     aws_future_http_message_register_callback_if_not_done(future, on_done, user_data)
 
-Documentation not found.
+aws\\_future<aws\\_http\\_message*>
+
 ### Prototype
 ```c
 AWS_FUTURE_T_POINTER_WITH_RELEASE_DECLARATION(aws_future_http_message, struct aws_http_message, AWS_HTTP_API);
@@ -2592,7 +2598,8 @@ end
 """
     aws_future_http_message_register_event_loop_callback(future, event_loop, on_done, user_data)
 
-Documentation not found.
+aws\\_future<aws\\_http\\_message*>
+
 ### Prototype
 ```c
 AWS_FUTURE_T_POINTER_WITH_RELEASE_DECLARATION(aws_future_http_message, struct aws_http_message, AWS_HTTP_API);
@@ -2605,7 +2612,8 @@ end
 """
     aws_future_http_message_register_channel_callback(future, channel, on_done, user_data)
 
-Documentation not found.
+aws\\_future<aws\\_http\\_message*>
+
 ### Prototype
 ```c
 AWS_FUTURE_T_POINTER_WITH_RELEASE_DECLARATION(aws_future_http_message, struct aws_http_message, AWS_HTTP_API);
@@ -2618,7 +2626,8 @@ end
 """
     aws_future_http_message_wait(future, timeout_ns)
 
-Documentation not found.
+aws\\_future<aws\\_http\\_message*>
+
 ### Prototype
 ```c
 AWS_FUTURE_T_POINTER_WITH_RELEASE_DECLARATION(aws_future_http_message, struct aws_http_message, AWS_HTTP_API);
@@ -3456,6 +3465,20 @@ struct aws_websocket_client_connection_options
     host_resolution_config::Ptr{aws_host_resolution_config}
 end
 
+"""
+    aws_websocket_server_upgrade_options
+
+Documentation not found.
+"""
+struct aws_websocket_server_upgrade_options
+    initial_window_size::Csize_t
+    user_data::Ptr{Cvoid}
+    on_incoming_frame_begin::Ptr{aws_websocket_on_incoming_frame_begin_fn}
+    on_incoming_frame_payload::Ptr{aws_websocket_on_incoming_frame_payload_fn}
+    on_incoming_frame_complete::Ptr{aws_websocket_on_incoming_frame_complete_fn}
+    manual_window_management::Bool
+end
+
 # typedef bool ( aws_websocket_stream_outgoing_payload_fn ) ( struct aws_websocket * websocket , struct aws_byte_buf * out_buf , void * user_data )
 """
 Called repeatedly as the websocket's payload is streamed out. The user should write payload data to out\\_buf, up to available capacity. The websocket will mask this data for you, if necessary. Invoked repeatedly on the websocket's event-loop thread.
@@ -3654,6 +3677,50 @@ struct aws_http_message *aws_http_message_new_websocket_handshake_request( struc
 """
 function aws_http_message_new_websocket_handshake_request(allocator, path, host)
     ccall((:aws_http_message_new_websocket_handshake_request, libaws_c_http), Ptr{aws_http_message}, (Ptr{aws_allocator}, aws_byte_cursor, aws_byte_cursor), allocator, path, host)
+end
+
+"""
+    aws_websocket_is_websocket_request(request)
+
+Return true if the request is a valid websocket upgrade request.
+
+### Prototype
+```c
+bool aws_websocket_is_websocket_request(const struct aws_http_message *request);
+```
+"""
+function aws_websocket_is_websocket_request(request)
+    ccall((:aws_websocket_is_websocket_request, libaws_c_http), Bool, (Ptr{aws_http_message},), request)
+end
+
+"""
+    aws_http_message_new_websocket_handshake_response(allocator, accept_key)
+
+Create response with all required fields for a websocket upgrade response. The following headers are added:
+
+Upgrade: websocket Connection: Upgrade Sec-WebSocket-Accept: <base64 encoded accept key>
+
+### Prototype
+```c
+struct aws_http_message *aws_http_message_new_websocket_handshake_response( struct aws_allocator *allocator, struct aws_byte_cursor accept_key);
+```
+"""
+function aws_http_message_new_websocket_handshake_response(allocator, accept_key)
+    ccall((:aws_http_message_new_websocket_handshake_response, libaws_c_http), Ptr{aws_http_message}, (Ptr{aws_allocator}, aws_byte_cursor), allocator, accept_key)
+end
+
+"""
+    aws_websocket_upgrade(allocator, stream, options)
+
+Upgrade an incoming HTTP connection to a websocket connection. This function should be called from the on\\_request\\_done callback of a request handler. It expects a fully constructed request and will handle sending the handshake response and install the websocket handler into the channel.
+
+### Prototype
+```c
+struct aws_websocket *aws_websocket_upgrade( struct aws_allocator *allocator, struct aws_http_stream *stream, const struct aws_websocket_server_upgrade_options *options);
+```
+"""
+function aws_websocket_upgrade(allocator, stream, options)
+    ccall((:aws_websocket_upgrade, libaws_c_http), Ptr{aws_websocket}, (Ptr{aws_allocator}, Ptr{aws_http_stream}, Ptr{aws_websocket_server_upgrade_options}), allocator, stream, options)
 end
 
 """
