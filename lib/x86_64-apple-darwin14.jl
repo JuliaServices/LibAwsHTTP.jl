@@ -164,7 +164,7 @@ end
 
 !!! compat "Deprecated"
 
-    - Supported proxy authentication modes. Superceded by proxy strategy.
+    - Supported proxy authentication modes. Superseded by proxy strategy.
 """
 @cenum aws_http_proxy_authentication_type::UInt32 begin
     AWS_HPAT_NONE = 0
@@ -795,6 +795,7 @@ Documentation not found.
     AWS_ERROR_HTTP_RESPONSE_FIRST_BYTE_TIMEOUT = 2092
     AWS_ERROR_HTTP_CONNECTION_MANAGER_ACQUISITION_TIMEOUT = 2093
     AWS_ERROR_HTTP_CONNECTION_MANAGER_MAX_PENDING_ACQUISITIONS_EXCEEDED = 2094
+    AWS_ERROR_HTTP_STREAM_CANCELLED = 2095
     AWS_ERROR_HTTP_END_RANGE = 3071
 end
 
@@ -907,7 +908,7 @@ mutable struct aws_http_stream end
 
 # typedef void ( aws_http2_stream_manager_on_stream_acquired_fn ) ( struct aws_http_stream * stream , int error_code , void * user_data )
 """
-Always invoked asynchronously when the stream was created, successfully or not. When stream is NULL, error code will be set to indicate what happened. If there is a stream returned, you own the stream completely. Invoked on the same thread as other callback of the stream, which will be the thread of the connection, ideally. If there is no connection made, the callback will be invoked from a sperate thread.
+Always invoked asynchronously when the stream was created, successfully or not. When stream is NULL, error code will be set to indicate what happened. If there is a stream returned, you own the stream completely. Invoked on the same thread as other callback of the stream, which will be the thread of the connection, ideally. If there is no connection made, the callback will be invoked from a separate thread.
 """
 const aws_http2_stream_manager_on_stream_acquired_fn = Cvoid
 
@@ -948,6 +949,7 @@ struct aws_http2_stream_manager_options
     ideal_concurrent_streams_per_connection::Csize_t
     max_concurrent_streams_per_connection::Csize_t
     max_connections::Csize_t
+    max_concurrent_streams::Csize_t
 end
 
 """
@@ -987,6 +989,22 @@ Invoked right before request/response stream is complete to report the tracing m
 """
 const aws_http_on_stream_metrics_fn = Cvoid
 
+# typedef void ( aws_http2_on_remote_end_stream_fn ) ( struct aws_http_stream * stream , void * user_data )
+"""
+Invoked when the remote peer sends END\\_STREAM on an HTTP/2 stream. This is always invoked on the HTTP connection's event-loop thread.
+
+**HTTP/2 ONLY** - This callback is only supported for HTTP/2 request.
+
+This callback is invoked when the remote peer finishes sending by setting the END\\_STREAM flag on the final HEADERS or DATA frame. This indicates that no more data will be received from the remote peer for this stream.
+
+Note: If the server sends RST\\_STREAM instead of END\\_STREAM, `on_remote_end_stream` will NOT fire, but `on_complete` will fire with an error code.
+
+# Arguments
+* `stream`: The HTTP/2 stream
+* `user_data`: User data provided in [`aws_http_make_request_options`](@ref)
+"""
+const aws_http2_on_remote_end_stream_fn = Cvoid
+
 # typedef void ( aws_http_on_stream_complete_fn ) ( struct aws_http_stream * stream , int error_code , void * user_data )
 """
 Invoked when a request/response stream is complete, whether successful or unsuccessful This is always invoked on the HTTP connection's event-loop thread. This will not be invoked if the stream is never activated.
@@ -995,7 +1013,7 @@ const aws_http_on_stream_complete_fn = Cvoid
 
 # typedef void ( aws_http_on_stream_destroy_fn ) ( void * user_data )
 """
-Invoked when request/response stream destroy completely. This can be invoked within the same thead who release the refcount on http stream. This is invoked even if the stream is never activated.
+Invoked when request/response stream destroy completely. This can be invoked within the same thread that releases the refcount on http stream. This is invoked even if the stream is never activated.
 """
 const aws_http_on_stream_destroy_fn = Cvoid
 
@@ -1012,8 +1030,10 @@ struct aws_http_make_request_options
     on_response_header_block_done::Ptr{aws_http_on_incoming_header_block_done_fn}
     on_response_body::Ptr{aws_http_on_incoming_body_fn}
     on_metrics::Ptr{aws_http_on_stream_metrics_fn}
+    on_h2_remote_end_stream::Ptr{aws_http2_on_remote_end_stream_fn}
     on_complete::Ptr{aws_http_on_stream_complete_fn}
     on_destroy::Ptr{aws_http_on_stream_destroy_fn}
+    use_manual_data_writes::Bool
     http2_use_manual_data_writes::Bool
     response_first_byte_timeout_ms::UInt64
 end
@@ -1629,6 +1649,17 @@ function aws_http_proxy_new_socket_channel(channel_options, proxy_options)
     ccall((:aws_http_proxy_new_socket_channel, libaws_c_http), Cint, (Ptr{aws_socket_channel_bootstrap_options}, Ptr{aws_http_proxy_options}), channel_options, proxy_options)
 end
 
+# typedef void aws_http_stream_write_complete_fn ( struct aws_http_stream * stream , int error_code , void * user_data )
+"""
+Invoked when the data stream of an outgoing HTTP write operation is no longer in use. This is always invoked on the HTTP connection's event-loop thread.
+
+# Arguments
+* `stream`: HTTP-stream this write operation was submitted to.
+* `error_code`: If error\\_code is AWS\\_ERROR\\_SUCCESS (0), the data was successfully sent. Any other error\\_code indicates that the HTTP-stream is in the process of terminating. If the error\\_code is AWS\\_ERROR\\_HTTP\\_STREAM\\_HAS\\_COMPLETED, the stream's termination has nothing to do with this write operation. Any other non-zero error code indicates a problem with this particular write operation's data.
+* `user_data`: User data for this write operation.
+"""
+const aws_http_stream_write_complete_fn = Cvoid
+
 """
     aws_http_header_compression
 
@@ -1727,17 +1758,6 @@ struct aws_http_request_handler_options
     on_destroy::Ptr{aws_http_on_stream_destroy_fn}
 end
 
-# typedef void aws_http_stream_write_complete_fn ( struct aws_http_stream * stream , int error_code , void * user_data )
-"""
-Invoked when the data stream of an outgoing HTTP write operation is no longer in use. This is always invoked on the HTTP connection's event-loop thread.
-
-# Arguments
-* `stream`: HTTP-stream this write operation was submitted to.
-* `error_code`: If error\\_code is AWS\\_ERROR\\_SUCCESS (0), the data was successfully sent. Any other error\\_code indicates that the HTTP-stream is in the process of terminating. If the error\\_code is AWS\\_ERROR\\_HTTP\\_STREAM\\_HAS\\_COMPLETED, the stream's termination has nothing to do with this write operation. Any other non-zero error code indicates a problem with this particular write operation's data.
-* `user_data`: User data for this write operation.
-"""
-const aws_http_stream_write_complete_fn = Cvoid
-
 """
 Invoked when the data of an outgoing HTTP/1.1 chunk is no longer in use. This is always invoked on the HTTP connection's event-loop thread.
 
@@ -1783,6 +1803,18 @@ Invoked when the data of an outgoing HTTP2 data frame is no longer in use. This 
 const aws_http2_stream_write_data_complete_fn = aws_http_stream_write_complete_fn
 
 """
+    aws_http_stream_write_data_options
+
+Unified options for writing data to an HTTP stream. Works with both HTTP/1.1 and HTTP/2.
+"""
+struct aws_http_stream_write_data_options
+    data::Ptr{aws_input_stream}
+    end_stream::Bool
+    on_complete::Ptr{aws_http_stream_write_complete_fn}
+    user_data::Ptr{Cvoid}
+end
+
+"""
     aws_http2_stream_write_data_options
 
 Encoding options for manual H2 data frame writes
@@ -1790,7 +1822,7 @@ Encoding options for manual H2 data frame writes
 struct aws_http2_stream_write_data_options
     data::Ptr{aws_input_stream}
     end_stream::Bool
-    on_complete::Ptr{aws_http2_stream_write_data_complete_fn}
+    on_complete::Ptr{aws_http_stream_write_complete_fn}
     user_data::Ptr{Cvoid}
 end
 
@@ -2690,9 +2722,31 @@ function aws_http1_stream_write_chunk(http1_stream, options)
 end
 
 """
+    aws_http_stream_write_data(stream, options)
+
+Write data to an HTTP stream in a protocol-agnostic way. Works with both HTTP/1.1 and HTTP/2.
+
+The stream must have specified `use_manual_data_writes` during request creation. For HTTP/1.1: The request must have either a Content-Length OR Transfer-Encoding: chunked header, but not both. Transfer-Encoding: chunked is automatically added if neither is set. The request must NOT have a body stream set.
+
+For client streams, activate() must be called before any data is written. For server streams, the response must be submitted before any data is written.
+
+If data is NULL and end\\_stream is false, the call is a no-op. If data is NULL and end\\_stream is true, the stream is completed with zero bytes written. A write with end\\_stream set to true will prevent any further writes.
+
+# Returns
+AWS\\_OP\\_SUCCESS if the write was queued successfully. AWS\\_OP\\_ERR indicating the attempt raised an error code: AWS\\_ERROR\\_HTTP\\_MANUAL\\_WRITE\\_NOT\\_ENABLED if use\\_manual\\_data\\_writes was not set. AWS\\_ERROR\\_HTTP\\_MANUAL\\_WRITE\\_HAS\\_COMPLETED if a previous write already set end\\_stream. AWS\\_ERROR\\_HTTP\\_STREAM\\_NOT\\_ACTIVATED if the stream has not been activated. AWS\\_ERROR\\_HTTP\\_STREAM\\_HAS\\_COMPLETED if the stream ended before this call.
+### Prototype
+```c
+int aws_http_stream_write_data( struct aws_http_stream *stream, const struct aws_http_stream_write_data_options *options);
+```
+"""
+function aws_http_stream_write_data(stream, options)
+    ccall((:aws_http_stream_write_data, libaws_c_http), Cint, (Ptr{aws_http_stream}, Ptr{aws_http_stream_write_data_options}), stream, options)
+end
+
+"""
     aws_http2_stream_write_data(http2_stream, options)
 
-The stream must have specified `http2_use_manual_data_writes` during request creation. For client streams, activate() must be called before any frames are submitted. For server streams, the response headers must be submitted before any frames. A write with options that has end\\_stream set to be true will end the stream and prevent any further write.
+This API will be DEPRECATED in favor of protocol agnostic [`aws_http_stream_write_data`](@ref) API. The stream must have specified `http2_use_manual_data_writes` during request creation. For client streams, activate() must be called before any frames are submitted. For server streams, the response headers must be submitted before any frames. A write with options that has end\\_stream set to be true will end the stream and prevent any further write.
 
 Typical usage will be something like: options.http2\\_use\\_manual\\_data\\_writes = true; stream = [`aws_http_connection_make_request`](@ref)(connection, &options); [`aws_http_stream_activate`](@ref)(stream); ... struct [`aws_http2_stream_write_data_options`](@ref) write; [`aws_http2_stream_write_data`](@ref)(stream, &write); ... struct [`aws_http2_stream_write_data_options`](@ref) last\\_write; last\\_write.end\\_stream = true; [`aws_http2_stream_write_data`](@ref)(stream, &write); ... [`aws_http_stream_release`](@ref)(stream);
 
@@ -3029,6 +3083,20 @@ void aws_http_stream_cancel(struct aws_http_stream *stream, int error_code);
 """
 function aws_http_stream_cancel(stream, error_code)
     ccall((:aws_http_stream_cancel, libaws_c_http), Cvoid, (Ptr{aws_http_stream}, Cint), stream, error_code)
+end
+
+"""
+    aws_http_stream_cancel_default_error(stream)
+
+Cancel the stream with default error code. Equivalent to invoke [`aws_http_stream_cancel`](@ref) with AWS\\_ERROR\\_HTTP\\_STREAM\\_CANCELLED.
+
+### Prototype
+```c
+void aws_http_stream_cancel_default_error(struct aws_http_stream *stream);
+```
+"""
+function aws_http_stream_cancel_default_error(stream)
+    ccall((:aws_http_stream_cancel_default_error, libaws_c_http), Cvoid, (Ptr{aws_http_stream},), stream)
 end
 
 """
@@ -3700,7 +3768,7 @@ end
 """
     aws_http_message_new_websocket_handshake_request(allocator, path, host)
 
-Create request with all required fields for a websocket upgrade request. The method and path are set, and the the following headers are added:
+Create request with all required fields for a websocket upgrade request. The method and path are set, and the following headers are added:
 
 Host: <host> Upgrade: websocket Connection: Upgrade Sec-WebSocket-Key: <base64 encoding of 16 random bytes> Sec-WebSocket-Version: 13
 
@@ -3778,6 +3846,29 @@ const AWS_HTTP2_SETTINGS_COUNT = 6
 Documentation not found.
 """
 const AWS_C_HTTP_PACKAGE_ID = 2
+
+# Skipping MacroDefinition: AWS_HTTP_STREAM_WRITE_DATA_OPTIONS_FIELDS /**                                                                                                                \
+#     * The data to be sent.                                                                                            \
+#     * Optional. May be NULL to write zero bytes.                                                                      \
+#     * If NULL and end_stream is false, the write is a no-op.                                                          \
+#     * If NULL and end_stream is true, the stream is completed with zero bytes written.                                \
+#     * With Content-Length, total bytes across all writes must match the declared length                               \
+#     * or the stream fails with AWS_ERROR_HTTP_OUTGOING_STREAM_LENGTH_INCORRECT.                                       \
+#     */ struct aws_input_stream * data ; /**                                                                                                                \
+#     * Set true when it's the last data to be sent.                                                                    \
+#     * After a write with end_stream, no more data writes will be accepted                                             \
+#     * (AWS_ERROR_HTTP_MANUAL_WRITE_HAS_COMPLETED).                                                                    \
+#     */ bool end_stream ; /**                                                                                                                \
+#     * Invoked when the data is no longer in use, whether or not it was successfully sent.                             \
+#     * Optional.                                                                                                       \
+#     * See `aws_http_stream_write_complete_fn`.                                                                        \
+#     * Called with AWS_ERROR_SUCCESS if data was sent successfully.                                                    \
+#     * Called with AWS_ERROR_HTTP_STREAM_HAS_COMPLETED if the stream was torn down                                     \
+#     * before this write could be processed.                                                                           \
+#     * Called with another error code if this write's data caused a problem.                                           \
+#     */ aws_http_stream_write_complete_fn * on_complete ; /**                                                                                                                \
+#     * User provided data passed to the on_complete callback on its invocation.                                        \
+#     */ void * user_data ;
 
 # Skipping MacroDefinition: AWS_HTTP_REQUEST_HANDLER_OPTIONS_INIT { . self_size = sizeof ( struct aws_http_request_handler_options ) , }
 
