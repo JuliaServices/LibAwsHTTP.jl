@@ -2,7 +2,7 @@ name: Auto update AWS LibAwsHTTP package
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Run every hour
+    - cron: '0 0 * * *'  # Run every day
   workflow_dispatch:
 
 permissions:
