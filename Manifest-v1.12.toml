@@ -1,0 +1,115 @@
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = "1.12.3"
+manifest_format = "2.0"
+project_hash = "a64954a1a1ed9425e1722ca59e4ae33b34da90e4"
+
+[[deps.Artifacts]]
+uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
+version = "1.11.0"
+
+[[deps.CEnum]]
+git-tree-sha1 = "389ad5c84de1ae7cf0e28e381131c98ea87d54fc"
+uuid = "fa961155-64e5-5f13-b03f-caf6b980ea82"
+version = "0.5.0"
+
+[[deps.Dates]]
+deps = ["Printf"]
+uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
+version = "1.11.0"
+
+[[deps.JLLWrappers]]
+deps = ["Artifacts", "Preferences"]
+git-tree-sha1 = "0533e564aae234aff59ab625543145446d8b6ec2"
+uuid = "692b3bcd-3c85-4b1f-b108-f13ce0eb3210"
+version = "1.7.1"
+
+[[deps.LibAwsCal]]
+deps = ["CEnum", "LibAwsCommon", "aws_c_cal_jll"]
+git-tree-sha1 = "d035716984bd6d8f9dd95560275de2d2a57106bd"
+uuid = "ef519ef6-af43-41a0-8ac4-eb81328190af"
+version = "1.1.12"
+
+[[deps.LibAwsCommon]]
+deps = ["CEnum", "aws_c_common_jll"]
+git-tree-sha1 = "db044ca6c83134fd83cb5648ca337f93caf52c24"
+uuid = "c6e421ba-b5f8-4792-a1c4-42948de3ed9d"
+version = "1.3.6"
+
+[[deps.LibAwsCompression]]
+deps = ["CEnum", "LibAwsCommon", "aws_c_compression_jll"]
+git-tree-sha1 = "fb54f12a1fb2acc523ef28adae279f4085763017"
+uuid = "51c8708f-2dd9-446d-a0d4-ba9f49ba4b23"
+version = "1.1.2"
+
+[[deps.LibAwsHTTP]]
+deps = ["CEnum", "LibAwsCal", "LibAwsCommon", "LibAwsCompression", "LibAwsIO", "aws_c_http_jll"]
+path = "."
+uuid = "ce851869-0d7a-41e7-95ef-2d4cb63876dd"
+version = "1.2.9"
+
+[[deps.LibAwsIO]]
+deps = ["CEnum", "LibAwsCal", "LibAwsCommon", "aws_c_io_jll"]
+git-tree-sha1 = "e6c5fe568e0667c84b67effd9e8b6dc97669bf80"
+uuid = "a5388770-19df-4151-b103-3d71de896ddf"
+version = "1.3.1"
+
+[[deps.Libdl]]
+uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+version = "1.11.0"
+
+[[deps.Preferences]]
+deps = ["TOML"]
+git-tree-sha1 = "522f093a29b31a93e34eaea17ba055d850edea28"
+uuid = "21216c6a-2e73-6563-6e65-726566657250"
+version = "1.5.1"
+
+[[deps.Printf]]
+deps = ["Unicode"]
+uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+version = "1.11.0"
+
+[[deps.TOML]]
+deps = ["Dates"]
+uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
+version = "1.0.3"
+
+[[deps.Unicode]]
+uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
+version = "1.11.0"
+
+[[deps.aws_c_cal_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "aws_c_common_jll"]
+git-tree-sha1 = "22c0f42f4a1f0dc5dcfa8fd267c4ac407c455e7a"
+uuid = "70f11efc-bab2-57f1-b0f3-22aad4e67c4b"
+version = "0.9.13+0"
+
+[[deps.aws_c_common_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "a759cb9bf456ad792cc7898a81ae333cce9ef02a"
+uuid = "73048d1d-b8c4-5092-a58d-866c5e8d1e50"
+version = "0.12.6+0"
+
+[[deps.aws_c_compression_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "aws_c_common_jll"]
+git-tree-sha1 = "7910c72f45f44afd297c39fe43b99c56d5ed22ec"
+uuid = "73a04cd5-f3d7-5bac-9290-e8adb709f224"
+version = "0.3.2+0"
+
+[[deps.aws_c_http_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "aws_c_compression_jll", "aws_c_io_jll"]
+git-tree-sha1 = "62f5798703522836e047ce2afece06228c0ebec6"
+uuid = "3254fc65-9028-534d-aa9d-d76d128babc6"
+version = "0.10.7+0"
+
+[[deps.aws_c_io_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "aws_c_cal_jll", "aws_c_common_jll", "s2n_tls_jll"]
+git-tree-sha1 = "e9fdfff323fbb6d90047f2df2e6a85d60f708a6f"
+uuid = "13c41daa-f319-5298-b5eb-5754e0170d52"
+version = "0.23.4+0"
+
+[[deps.s2n_tls_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "ad2a7a9e19221b2e4b6a84118b19b34fd30df904"
+uuid = "cddc5d3d-934d-5d3a-9747-62fc12ea3f48"
+version = "1.7.0+0"
