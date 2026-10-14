@@ -237,6 +237,7 @@ struct aws_http_client_connection_options
     http2_options::Ptr{aws_http2_connection_options}
     requested_event_loop::Ptr{aws_event_loop}
     host_resolution_config::Ptr{aws_host_resolution_config}
+    l4_proxy_config::Ptr{aws_l4_proxy_config}
 end
 
 """
@@ -661,6 +662,7 @@ struct aws_http_connection_manager_options
     max_pending_connection_acquisitions::UInt64
     network_interface_names_array::Ptr{aws_byte_cursor}
     num_network_interface_names::Csize_t
+    l4_proxy_config::Ptr{aws_l4_proxy_config}
 end
 
 """
@@ -2898,7 +2900,7 @@ The `options` are copied during this call.
 
 Tip for language bindings: Do not bind the `options` struct. Use something more natural for your language, such as Builder Pattern in Java, or Python's ability to take many optional arguments by name.
 
-Note: The header of the request will be sent as it is when the message to send protocol matches the protocol of the connection. - No `user-agent` will be added. - No security check will be enforced. eg: `referer` header privacy should be enforced by the user-agent who adds the header - When HTTP/1 message sent on HTTP/2 connection, [`aws_http2_message_new_from_http1`](@ref) will be applied under the hood. - When HTTP/2 message sent on HTTP/1 connection, no change will be made.
+Note: The header of the request will be sent as it is when the message to send protocol matches the protocol of the connection. - No `user-agent` will be added. - No security check will be enforced. eg: `referer` header privacy should be enforced by the user-agent who adds the header - When HTTP/1 message sent on HTTP/2 connection, [`aws_http2_message_new_from_http1`](@ref) will be applied under the hood. - When HTTP/2 message sent on HTTP/1 connection, no change will be made. - `request` is never modified. Protocol conversion builds a new message; otherwise only a refcount is taken. - For HTTP/2, a missing `:method` or `:path` fails this call with AWS\\_ERROR\\_HTTP\\_INVALID\\_METHOD / \\_INVALID\\_PATH. The remaining pseudo-header rules (RFC-9113 8.3) are enforced by the peer.
 
 ### Prototype
 ```c
@@ -3565,6 +3567,7 @@ struct aws_websocket_client_connection_options
     manual_window_management::Bool
     requested_event_loop::Ptr{aws_event_loop}
     host_resolution_config::Ptr{aws_host_resolution_config}
+    l4_proxy_config::Ptr{aws_l4_proxy_config}
 end
 
 """
